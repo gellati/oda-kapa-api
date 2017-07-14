@@ -6,8 +6,9 @@ module.exports = app; // for testing
 
 var config = {
   appRoot: __dirname, // required config
-  configDir: __dirname + '/config/swagger',
-  swaggerFile: __dirname + '/kapa-api/index.yaml'
+// use these two lines to define location of own swagger file
+//  configDir: __dirname + '/config/swagger',
+//  swaggerFile: __dirname + '/kapa-api/index.yaml'
 };
 
 SwaggerExpress.create(config, function(err, swaggerExpress) {

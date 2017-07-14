@@ -8,8 +8,10 @@ module.exports = app; // for testing
 
 var config = {
   appRoot: __dirname, // required config
-  configDir: __dirname + '/config/swagger',
-  swaggerFile: __dirname + '/kapa-api/index.yaml'
+// use following two lines to define location of own swagger file
+//  configDir: __dirname + '/config/swagger',
+//  swaggerFile: __dirname + '/kapa-api/index.yaml'
+
 //  swaggerFile: `${__dirname}/kapa-api/index.yaml`
 };
 
