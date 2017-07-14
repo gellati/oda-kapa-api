@@ -14,6 +14,22 @@ install swagger globally with the following command
 
 (you might need to do this with suitable permissions depending on your system)
 
+Code under work is in oda-kapa-express.
+
+ok so far
+- editor works
+
+Editor can be run with
+
+    npm run edit
+
+Current issues:
+- tests not working
+- what is the value of `testPath` when tests actually work? (check this first)
+- set environment variable for test script in package.json
+- ? should test variable be set in app.js ?
+
+
 ## tests
 
 run tests with

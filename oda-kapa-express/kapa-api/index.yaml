@@ -1,8 +1,8 @@
-# this is a first draft of the CarePlan comments API
+# this is a first draft osf the CarePlan comments API
 swagger: '2.0'
 info:
   $ref: ./info/index.yaml
 paths:
-  $ref: ./paths/index.yaml
+  $ref: ./paths/paths.yaml
 definitions:
-  $ref: ./definitions/index.yaml
+  $ref: ./definitions/definitions.yaml

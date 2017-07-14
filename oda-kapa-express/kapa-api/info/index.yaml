@@ -1,6 +1,6 @@
-  title: API for Care plan comments and notifications
-  description: Get comments and notifications related to the Care Plan
-  version: "0.0.1"
+title: API for Care plan comments and notifications
+description: Get comments and notifications related to the Care Plan
+version: "0.0.1"
 # the domain of the service
 host: oda.medidemo.fi
 # array of all supported schemes
@@ -11,3 +11,31 @@ schemes:
 basePath: /v1
 produces:
   - application/json
+
+#/CarePlan:
+  get:
+    summary: Search CarePlan resources. The return message will be checked to see if query
+      maker is authorized to access the information
+      description: Return CarePlan information according to given parameters
+      parameters:
+        - name: goal
+          in: query
+          required: false
+          type: string
+          description: query for the goal related to the CarePlan
+#          pattern: "Goal/^[a-zA-Z0-9_-]+$"
+        - name: status
+          in: query
+          required: false
+          type: string
+        - name: subject
+          in: query
+          required: false
+          type: string
+          description: Who the careplan is meant for
+#          pattern: "Patient/^[a-zA-Z0-9_-]+$"
+          responses:
+        200:
+          description: OK [Response message with Goal resource]
+        default:
+          description: Unexpected error
