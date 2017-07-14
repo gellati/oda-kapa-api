@@ -8,6 +8,12 @@ in both folders, install necessary node packages with
 
     npm install
 
+install swagger globally with the following command
+
+    npm install -g swagger
+
+(you might need to do this with suitable permissions depending on your system)
+
 ## tests
 
 run tests with
