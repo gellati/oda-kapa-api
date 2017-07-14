@@ -19,6 +19,6 @@ or
     swagger project test
 
 
-# configuration
+## configuration
 
 location of the api file can be modified in the `app.js` and `package.json` files (at least according to [this](https://github.com/swagger-api/swagger-node/issues/373))
