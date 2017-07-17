@@ -18,6 +18,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "swagger project test",
+    "edit_old": "set swagger_swagger_fileName=kapa-api/index.yaml",
     "edit": "swagger_swagger_fileName=kapa-api/index.yaml swagger project edit"
   }
 }

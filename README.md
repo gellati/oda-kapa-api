@@ -44,3 +44,7 @@ or
 ## configuration
 
 location of the api file can be modified in the `app.js` and `package.json` files (at least according to [this](https://github.com/swagger-api/swagger-node/issues/373))
+
+The app.js file contains the variables `configDir` and `swaggerFile` which can be used to define the location and name of own swagger file.
+
+In the `package.json` file the environmental variable `swagger_swagger_fileName` should be set to the directory where the swagger file is located.
