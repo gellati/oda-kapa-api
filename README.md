@@ -19,14 +19,18 @@ Code under work is in oda-kapa-express.
 ok so far
 - editor works
 - have Dredd tests that work
+- can make get request to fhir service
+
+
 
 Editor can be run with
 
     npm run edit
 
 Current issues:
+- not all get requests work, problem with parameters?
+- content of post requests
 - tests that pass, but what do they mean?
-- put mock data into tests
 - automate server restarts with gulp
 
 old todo-issues
@@ -37,7 +41,7 @@ old todo-issues
 
 ## tests
 
-Tests are run with [Dredd](https://github.com/apiaryio/dredd).
+Tests are done with [Dredd](https://github.com/apiaryio/dredd).
 
 Install Dredd with
 
@@ -53,15 +57,18 @@ Then run tests with
 
     dredd <name of swagger file> <server url>
 
+Tests can also be run by simply typing
 
+    dredd
 
-run tests with
+in the directory where the `dredd.yml` configuration file is located.
 
-    npm test
+Connection to the fhir service is done with a hook in the `hook.coffee` file, whose location is defined in the `dredd.yml` file. Its contents are the following:
 
-or
+    hooks = require 'hooks'
+    hooks.beforeEach (transaction) -> transaction.request.headers['Authorization'] = "Bearer eyJ..."
 
-    swagger project test
+where `eyJ...` is the authorization token.
 
 
 ## configuration
