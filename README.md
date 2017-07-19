@@ -16,18 +16,17 @@ install swagger globally with the following command
 
 (you might need to do this with suitable permissions depending on your system)
 
+Editor can be run with
+
+    npm run edit
+
 Code under work is in oda-kapa-express.
 
 ok so far
 - editor works
 - have Dredd tests that work
-- can make get request to fhir service
+- can make get/post requests to fhir service
 
-
-
-Editor can be run with
-
-    npm run edit
 
 Current issues:
 - not all get requests work, problem with parameters?
@@ -39,8 +38,7 @@ Current issues:
    - subject in CarePlan
    - sender, patient, basedOn in Communication
 - tests that pass, but what do they mean?
-- automate server restarts with gulp
-
+- (optional, if using express server) automate server restarts with gulp
 
 
 ## Tests
@@ -85,4 +83,4 @@ The app.js file contains the variables `configDir` and `swaggerFile` which can b
 
 In the `package.json` file the environmental variable `swagger_swagger_fileName` should be set to the directory where the swagger file is located.
 
-This makes it possible to edit the swagger file directly in a browser.
+This makes it possible to edit the swagger file directly in a browser-based editor.
