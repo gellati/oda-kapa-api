@@ -53,7 +53,7 @@ Install Dredd with
 
 Installation currently works for Linux, fails for Cygwin/Windows
 
-Tests currently run against oda fhir service, but a small express server also exists for mock testing.
+Tests currently run against oda fhir service, but a small express server also exists for mock testing (currently the express server is outdated).
 
 Maker server run with
 
