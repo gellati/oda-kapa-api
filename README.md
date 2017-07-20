@@ -1,6 +1,6 @@
 # oda-kapa-api
 
-[![swagger-api validator-badge]({https://raw.githubusercontent.com/gellati/oda-kapa-api/master/oda-kapa-express/kapa-api/kapa-api.yaml}task-list-api-swagger-definition.yaml)](./oda-kapa-express/kapa-api/kapa-api.yaml)
+[![swagger-api validator-badge](https://raw.githubusercontent.com/gellati/oda-kapa-api/master/oda-kapa-express/kapa-api/kapa-api.yaml)](./oda-kapa-express/kapa-api/kapa-api.yaml)
 
 ### Overview
 
