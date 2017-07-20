@@ -19,63 +19,36 @@ consumes:
 # using 500 for default error responses
 
 paths:
-#  # not working
-#  # try with example string instead of definition
-#   /Communication:
-#     post:
-#       summary: Endpoint to create new CarePlan comment
-#       description: Endpoint where a new comment can be added to the careplan
-#       consumes:
-#         - application/json+fhir;charset=UTF-8
-#       parameters:
-#         - name: Communication
-#           in: body
-#           required: true
-#           schema:
-#             $ref: '#/definitions/Communication'
-#           # schema-example:
-#           #   {
-#           #       "resourceType": "Communication",
-#           #       "text": {
-#           #           "status": "generated",
-#           #           "div": "<div>You are progressing well! Good work!</div>"
-#           #       },
-#           #       "status": "completed",
-#           #       "category": [{
-#           #           "text": "oda-careplan-comment"
-#           #       }],
-#           #       "subject": {
-#           #           "reference": "Patient/PATIENT1"
-#           #       },
-#           #       "basedOn": [{
-#           #           "reference": "CarePlan/CAREPLAN1-PATIENT1"
-#           #       }],
-#           #       "sent": "2017-06-20T18:01:10-08:00",
-#           #       "received": "2017-06-20T18:01:10-09:00",
-#           #       "sender": {
-#           #           "reference": "Practitioner/PRACTITIONER1"
-#           #       },
-#           #       "recipient": [{
-#           #           "reference": "Patient/PATIENT1"
-#           #       }],
-#           #       "payload": [{
-#           #           "contentString": "You are progressing well! Good work!"
-#           #       }]
-#           #   }
-#
-#       tags:
-#         - CarePlan comments and notifications
-#       responses:
-#         200:
-#           description: OK
-# #           schema:
-# #             $ref: '#/definitions/Communication'
-#         500:
-#           description: Unexpected error
-#           schema:
-#             $ref: '#/definitions/Error'
-
   /Communication:
+    post:
+      summary: Endpoint to create new CarePlan comment
+      description: Endpoint where a new comment can be added to the careplan
+      consumes:
+        - application/json+fhir;charset=UTF-8
+      parameters:
+        - name: Communication
+          description: Communication resource
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Communication'
+      tags:
+        - CarePlan comments and notifications
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/OperationOutcome' #_CommunicationPost'
+        400:
+          description: Error in request
+          schema:
+            $ref: '#/definitions/OperationOutcome'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/OperationOutcome_Error'
+
+# problem with parameters
     get:
       summary: Get comments related to the careplan, searched and filtered by different parameters
       description: The search path for Communication
@@ -83,16 +56,16 @@ paths:
         - name: basedOn ## correct parameter name? is it "based-on"?
           in: query
           description: The id of the careplan. Format is CarePlan/{id}
-          required: true
+          required: false
           type: string
           pattern: "CarePlan/^[a-zA-Z0-9_-]+$"
-          x-example: "CarePlan/CAREPLAN1-PATIENT1"
+#          x-example: "CarePlan/CAREPLAN1-PATIENT1"
         - name: sender
           in: query
           description: The one who sent the message
           required: false
           type: string
-          x-example: "Practitioner/PRACTITIONER1"
+          x-example: "PRACTITIONER1"
         - name: patient
           in: query
           description: The receiver of the message
@@ -108,10 +81,14 @@ paths:
           description: An array of comments
           schema:
             $ref: '#/definitions/Communication'
+        400:
+          description: Error in request
+          schema:
+            $ref: '#/definitions/OperationOutcome'
         500:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/Error'
+            $ref: '#/definitions/OperationOutcome_Error'
 
 # this does not work??
   # /Communication/$search:
@@ -137,27 +114,27 @@ paths:
   #           $ref: '#/definitions/Error'
 
 # works in dredd
-  /CarePlan/{id}:
-    get:
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: CarePlan corresponding to the id
-          type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: 'CAREPLAN1-PATIENT1'
-      tags:
-        - CarePlan comments and notifications
-      responses:
-        200:
-          description: CarePlan with new comments
-          schema:
-            $ref: '#/definitions/CarePlan'
-        500:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
+  # /CarePlan/{id}:
+  #   get:
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         description: CarePlan corresponding to the id
+  #         type: string
+  #         pattern: "^[a-zA-Z0-9_-]+$"
+  #         x-example: 'CAREPLAN1-PATIENT1'
+  #     tags:
+  #       - CarePlan comments and notifications
+  #     responses:
+  #       200:
+  #         description: CarePlan with new comments
+  #         schema:
+  #           $ref: '#/definitions/CarePlan'
+  #       500:
+  #         description: Unexpected error
+  #         schema:
+  #           $ref: '#/definitions/Error'
 
   /CarePlan:
     get:
@@ -187,67 +164,72 @@ paths:
             description: OK [Response message with Goal resource]
             schema:
               type: "object"
+          400:
+            description: Error in request
+            schema:
+              $ref: '#/definitions/OperationOutcome'
           500:
             description: Unexpected error
             schema:
-              '$ref': '#/definitions/Error'
+              '$ref': '#/definitions/OperationOutcome_Error'
 
 # no work, even though path in oda-fhir-service in CarePlanProvider
-  /CareTeam/$search-servicerequests:
-    get:
-      summary: Search CarePlan resources that the professional is authorized to access (include linked CareTeam and EpisodeOfCare resources)
-      description: Return Careteams and EpisodeOfCares of professional
-      tags:
-        - Professional service request list
-      parameters:
-        - name: practitioner
-          in: query
-          required: true
-          type: string
-          description: Query for the CareTeams and EpisodeOfCares corresponding to a professional
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: "PRACTITIONER1"
-      responses:
-        200:
-          description: OK [Bundle with CareTeam and EpisodeOfCare resources]
-          schema:
-              $ref: '#/definitions/Bundle'
-
-  /CarePlan/{id}/$assign:
-    post:
-      description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
-      consumes:
-        - application/json+fhir;charset=UTF-8
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: identifier for the careplan
-          type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: "CAREPLAN1-PATIENT1"
-        - name: body
-          in: body
-          required: true
-          description: EpisodeOfCare to update/create
-          schema:
-            $ref: '#/definitions/EpisodeOfCare'
-        - name: practitioner
-          in: query
-          required: true
-          description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
-          type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: 'PRACTITIONER1'
-      tags:
-        - Professional service request list
-      responses:
-          200:
-            description: OK
-          500:
-            description: Unexpected error
-            schema:
-              '$ref': '#/definitions/Error'
+#   /CareTeam/$search-servicerequests:
+#     get:
+#       summary: Search CarePlan resources that the professional is authorized to access (include linked CareTeam and EpisodeOfCare resources)
+#       description: Return Careteams and EpisodeOfCares of professional
+#       tags:
+#         - Professional service request list
+#       parameters:
+#         - name: practitioner
+#           in: query
+#           required: true
+#           type: string
+#           description: Query for the CareTeams and EpisodeOfCares corresponding to a professional
+#           pattern: "^[a-zA-Z0-9_-]+$"
+#           x-example: "PRACTITIONER1"
+#       responses:
+#         200:
+#           description: OK [Bundle with CareTeam and EpisodeOfCare resources]
+#           schema:
+#               $ref: '#/definitions/Bundle'
+#
+# # insufficent rights to assign careplan
+#   /CarePlan/{id}/$assign:
+#     post:
+#       description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+#       consumes:
+#         - application/json+fhir;charset=UTF-8
+#       parameters:
+#         - name: id
+#           in: path
+#           required: true
+#           description: identifier for the careplan
+#           type: string
+#           pattern: "^[a-zA-Z0-9_-]+$"
+#           x-example: "CAREPLAN1-PATIENT1"
+#         - name: body
+#           in: body
+#           required: true
+#           description: EpisodeOfCare to update/create
+#           schema:
+#             $ref: '#/definitions/EpisodeOfCare'
+#         - name: practitioner
+#           in: query
+#           required: true
+#           description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+#           type: string
+#           pattern: "^[a-zA-Z0-9_-]+$"
+#           x-example: 'PRACTITIONER1'
+#       tags:
+#         - Professional service request list
+#       responses:
+#           200:
+#             description: OK
+#           500:
+#             description: Unexpected error
+#             schema:
+#               '$ref': '#/definitions/Error'
 
 definitions:
   Bundle:
@@ -291,21 +273,8 @@ definitions:
   #         description: The current status of the comment.
 
 
-# this is not working in the dredd validation for post request
   Communication:
     type: object
-    required:
-      - resourceType
-#      - text
-      - status
-      - category
-      - subject
-      - basedOn
-      - sent
-      - received
-      - sender
-      - recipient
-      - payload
     description: Communication
     properties:
       resourceType:
@@ -342,8 +311,8 @@ definitions:
           reference:
             type: string
 #            example: Patient/PATIENT1
-            enum:
-              - "Patient/PATIENT1"
+#            enum:
+#              - "Patient/PATIENT1"
       basedOn:
         type: array
         items:
@@ -352,26 +321,26 @@ definitions:
             reference:
               type: string
 #              example: CarePlan/CAREPLAN1-PATIENT1
-              enum:
-                - "CarePlan/CAREPLAN1-PATIENT1"
+#              enum:
+#                - "CarePlan/CAREPLAN1-PATIENT1"
       sent:
         type: string
 #        format: date-time
-        enum:
-          - "2017-06-20T18:01:10-09:00"
+#        enum:
+#          - "2017-06-20T18:01:10-09:00"
       received:
         type: string
 #        format: date-time
-        enum:
-          - "2017-06-20T18:01:10-09:00"
+#        enum:
+#          - "2017-06-20T18:01:10-09:00"
       sender:
         type: object
         properties:
           reference:
             type: string
 #            example: Practitioner/PRACTITIONER1
-            enum:
-              - "Practitioner/PRACTITIONER1"
+#            enum:
+#              - "Practitioner/PRACTITIONER1"
       recipient:
         type: array
         items:
@@ -380,8 +349,8 @@ definitions:
             reference:
               type: string
 #              example: Patient/PATIENT1
-              enum:
-                - "Patient/PATIENT1"
+#              enum:
+#                - "Patient/PATIENT1"
       payload:
         type: array
         items:
@@ -389,6 +358,74 @@ definitions:
           properties:
             contentString:
               type: string
+    required:
+      - resourceType
+#      - text
+      - status
+      - category
+      - subject
+      - basedOn
+      - sent
+      - received
+      - sender
+      - recipient
+      - payload
+    example:
+      resourceType: Communication
+      text:
+        status: generated
+        div: You are progressing well! Good work!
+      status: completed
+      category:
+        text: oda-careplan-comment
+      subject:
+        reference: Patient/PATIENT1
+      basedOn:
+        reference: CarePlan/CAREPLAN1-PATIENT1
+      sent: "2017-06-20T18:01:10-08:00"
+      received: "2017-06-20T18:01:10-09:00"
+      sender:
+        reference: Practitioner/PRACTITIONER1
+      recipient:
+        items:
+          reference: Patient/PATIENT1
+      payload:
+        items:
+          contentString: "You are progressing well! Good work!"
+
+
+
+
+
+#           # schema-example:
+#           #   {
+#           #       "resourceType": "Communication",
+#           #       "text": {
+#           #           "status": "generated",
+#           #           "div": "<div>You are progressing well! Good work!</div>"
+#           #       },
+#           #       "status": "completed",
+#           #       "category": [{
+#           #           "text": "oda-careplan-comment"
+#           #       }],
+#           #       "subject": {
+#           #           "reference": "Patient/PATIENT1"
+#           #       },
+#           #       "basedOn": [{
+#           #           "reference": "CarePlan/CAREPLAN1-PATIENT1"
+#           #       }],
+#           #       "sent": "2017-06-20T18:01:10-08:00",
+#           #       "received": "2017-06-20T18:01:10-09:00",
+#           #       "sender": {
+#           #           "reference": "Practitioner/PRACTITIONER1"
+#           #       },
+#           #       "recipient": [{
+#           #           "reference": "Patient/PATIENT1"
+#           #       }],
+#           #       "payload": [{
+#           #           "contentString": "You are progressing well! Good work!"
+#           #       }]
+#           #   }
 
 
 
@@ -487,7 +524,7 @@ definitions:
     #         "reference": "CareTeam/CARETEAM2-CARE"
 
 
-  Error:
+  OperationOutcome_Error:
     type: object
     properties:
       code:
@@ -497,3 +534,30 @@ definitions:
         type: string
       fields:
         type: string
+
+  OperationOutcome:
+    type: object
+    required:
+      - resourceType
+      - issue
+    properties:
+      resourceType:
+        type: string
+      text:
+        type: object
+        properties:
+          status:
+            type: string
+          div:
+            type: string
+      issue:
+        type: array
+        items:
+          type: object
+          properties:
+            severity:
+              type: string
+            code:
+              type: string
+            diagnostics:
+              type: string
