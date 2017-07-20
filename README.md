@@ -1,16 +1,18 @@
 # oda-kapa-api
 
-## Overview
+[![swagger-api validator-badge]({https://raw.githubusercontent.com/gellati/oda-kapa-api/master/oda-kapa-express/kapa-api/kapa-api.yaml}task-list-api-swagger-definition.yaml)](./oda-kapa-express/kapa-api/kapa-api.yaml)
 
-Testing the use of swagger for documentation purposes.
+### Overview
+
+Testing the use of Swagger (OpenAPI) for documentation purposes.
 
 The folder oda-kapa-hapi contains swagger running on a hapi server, oda-kapa-express contains swagger running on an express server.
 
-in both folders, install necessary node packages with
+In both folders, install necessary node packages with
 
     npm install
 
-install swagger globally with the following command
+Install swagger globally with the following command
 
     npm install -g swagger
 
@@ -26,13 +28,16 @@ ok so far
 - editor works
 - have Dredd tests that work
 - can make get/post requests to fhir service
+- post data structures in data models
 
-
-Current issues:
+Current issues/todos:
+- Dredd hooks to be able to skip tests
 - not all get requests work, problem with parameters?
 - content of post requests
-- paths that don't seem to work
-  - $search-servicerequests
+- custom operation paths that don't seem to work
+  - CareTeam/$search-servicerequests
+  - CarePlan/{id}/$assign
+  - Communication/$search
 - GET parameters which are not accepted
    - basedOn/based-on in $search
    - subject in CarePlan
@@ -41,9 +46,9 @@ Current issues:
 - (optional, if using express server) automate server restarts with gulp
 
 
-## Tests
+### Tests
 
-Tests are done with [Dredd](https://github.com/apiaryio/dredd).
+Testing of the Swagger documentation is done with [Dredd](https://github.com/apiaryio/dredd).
 
 Install Dredd with
 
@@ -67,15 +72,15 @@ Tests can also be run by simply typing
 
 in the directory where the `dredd.yml` configuration file is located.
 
-Connection to the fhir service is done with a hook in the `hook.coffee` file, whose location is defined in the `dredd.yml` file. Its contents are the following:
+Connection to the fhir service requires authentication. This is done with a hook in the `hook.coffee` file, whose location is defined in the `dredd.yml` file. Its contents are the following:
 
     hooks = require 'hooks'
     hooks.beforeEach (transaction) -> transaction.request.headers['Authorization'] = "Bearer eyJ..."
 
-where `eyJ...` is the authorization token.
+where `eyJ...` is the authorization token. You have to create your own authorization hook file.
 
 
-## Configuration
+### Configuration
 
 Location of the api file can be modified in the `app.js` and `package.json` files (at least according to [this](https://github.com/swagger-api/swagger-node/issues/373))
 
