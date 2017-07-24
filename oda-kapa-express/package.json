@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "swagger project test"
+    "test": "swagger project test",
+    "edit": "export swagger_swagger_fileName=kapa-api/kapa-api.yaml&&swagger project edit"
   }
 }

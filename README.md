@@ -72,12 +72,12 @@ Tests can also be run by simply typing
 
 in the directory where the `dredd.yml` configuration file is located.
 
-Connection to the fhir service requires authentication. This is done with a hook in the `hook.coffee` file, whose location is defined in the `dredd.yml` file. Its contents are the following:
+Connection to the fhir service requires authentication. This is done with a hook in the `hook.coffee` file, whose location is in the hooks directory. The location needs to be defined in the `dredd.yml` file. The hook authentication file's contents are the following:
 
     hooks = require 'hooks'
     hooks.beforeEach (transaction) -> transaction.request.headers['Authorization'] = "Bearer eyJ..."
 
-where `eyJ...` is the authorization token. You have to create your own authorization hook file.
+where `eyJ...` is the authorization token. You have to create your own authorization hook file, including the token.
 
 
 ### Configuration

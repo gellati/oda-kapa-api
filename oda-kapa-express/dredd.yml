@@ -1,6 +1,6 @@
 # documentation about options can be read in https://github.com/apiaryio/dredd/blob/master/src/options.coffee
 dry-run: null
-hookfiles: ./hooks/hook.coffee
+hookfiles: ./hooks/hook.*
 language: nodejs
 sandbox: false
 server: null

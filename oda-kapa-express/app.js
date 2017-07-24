@@ -13,8 +13,8 @@ var basePath = '/v1'
 var config = {
   appRoot: __dirname // required config
 // use these two lines to define location of own swagger file
-//  configDir: __dirname + '/config/swagger',
-//  swaggerFile: __dirname + '/kapa-api/kapa-api.yaml'
+  configDir: __dirname + '/config/swagger',
+  swaggerFile: __dirname + '/kapa-api/kapa-api.yaml'
 
 
 //  testPath: __dirname + '/test'

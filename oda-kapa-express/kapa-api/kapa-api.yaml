@@ -20,40 +20,40 @@ consumes:
 
 paths:
   /Communication:
-    # post:
-    #   summary: Endpoint to create new CarePlan comment
-    #   description: Endpoint where a new comment can be added to the careplan
-    #   consumes:
-    #     - application/json+fhir;charset=UTF-8
-    #   parameters:
-    #     - name: Communication
-    #       description: Communication resource
-    #       in: body
-    #       required: true
-    #       schema:
-    #         $ref: '#/definitions/Communication'
-    #   tags:
-    #     - CarePlan comments and notifications
-    #   responses:
-    #     201:
-    #       description: OK
-    #       schema:
-    #         $ref: '#/definitions/OperationOutcome' #_CommunicationPost'
-    #     400:
-    #       description: Error in request
-    #       schema:
-    #         $ref: '#/definitions/OperationOutcome'
-    #     500:
-    #       description: Unexpected error
-    #       schema:
-    #         $ref: '#/definitions/OperationOutcome_Error'
+    post:
+      summary: Endpoint to create new CarePlan comment
+      description: Endpoint where a new comment can be added to the careplan
+      consumes:
+        - application/json+fhir;charset=UTF-8
+      parameters:
+        - name: Communication
+          description: Communication resource
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Communication'
+      tags:
+        - CarePlan comments and notifications
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/OperationOutcome' #_CommunicationPost'
+        400:
+          description: Error in request
+          schema:
+            $ref: '#/definitions/OperationOutcome'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/OperationOutcome_Error'
 
 # problem with parameters
     get:
       summary: Get comments related to the careplan, searched and filtered by different parameters
       description: The search path for Communication
       parameters:
-        - name: based%2don
+        - name:  based-on #based%2don
 #        - name: "based-on" ## correct parameter name? is it "based-on"?
           in: query
           description: The id of the careplan. Format is CarePlan/{id}
@@ -76,7 +76,6 @@ paths:
         #   x-example: "Patient/PATIENT1"
       tags:
         - CarePlan comments and notifications
-        - Communication
       responses:
         200:
           description: An array of comments
@@ -95,7 +94,7 @@ paths:
   # /Communication/$search:
   #   get:
   #     parameters:
-  #       - name: based-on # this wrong?
+  #       - name: basedOn # based-on # this wrong?
   #         in: path
   #         required: false
   #         description: id of the CarePlan
@@ -112,67 +111,67 @@ paths:
   #       500:
   #         description: Unexpected error
   #         schema:
-  #           $ref: '#/definitions/Error'
-
-# works in dredd
-  # /CarePlan/{id}:
-  #   get:
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         required: true
-  #         description: CarePlan corresponding to the id
-  #         type: string
-  #         pattern: "^[a-zA-Z0-9_-]+$"
-  #         x-example: 'CAREPLAN1-PATIENT1'
-  #     tags:
-  #       - CarePlan comments and notifications
-  #     responses:
-  #       200:
-  #         description: CarePlan with new comments
-  #         schema:
-  #           $ref: '#/definitions/CarePlan'
-  #       500:
-  #         description: Unexpected error
-  #         schema:
   #           $ref: '#/definitions/OperationOutcome_Error'
-  #
-  # /CarePlan:
-  #   get:
-  #     summary: Search CarePlan resources. The return message will be checked to see if query
-  #       maker is authorized to access the information
-  #     description: Return CarePlan information according to given parameters
-  #     parameters:
-  #         - name: goal
-  #           in: query
-  #           required: false
-  #           type: string
-  #           description: query for the goal related to the CarePlan
-  #           pattern: "Goal/^[a-zA-Z0-9_-]+$"
-  #         - name: status
-  #           in: query
-  #           required: false
-  #           type: string
-  #         - name: subject
-  #           in: query
-  #           required: true
-  #           type: string
-  #           description: Who the careplan is meant for
-  #           pattern: "Patient/^[a-zA-Z0-9_-]+$"
-  #           x-example: "Patient/PATIENT1"
-  #     responses:
-  #         200:
-  #           description: OK [Response message with Goal resource]
-  #           schema:
-  #             type: "object"
-  #         400:
-  #           description: Error in request
-  #           schema:
-  #             $ref: '#/definitions/OperationOutcome'
-  #         500:
-  #           description: Unexpected error
-  #           schema:
-  #             '$ref': '#/definitions/OperationOutcome_Error'
+
+#works in dredd
+  /CarePlan/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: CarePlan corresponding to the id
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+          x-example: 'CAREPLAN1-PATIENT1'
+      tags:
+        - CarePlan comments and notifications
+      responses:
+        200:
+          description: CarePlan with new comments
+          schema:
+            $ref: '#/definitions/CarePlan'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/OperationOutcome_Error'
+
+  /CarePlan:
+    get:
+      summary: Search CarePlan resources. The return message will be checked to see if query
+        maker is authorized to access the information
+      description: Return CarePlan information according to given parameters
+      parameters:
+          - name: goal
+            in: query
+            required: false
+            type: string
+            description: query for the goal related to the CarePlan
+            pattern: "Goal/^[a-zA-Z0-9_-]+$"
+          - name: status
+            in: query
+            required: false
+            type: string
+          - name: subject
+            in: query
+            required: true
+            type: string
+            description: Who the careplan is meant for
+            pattern: "Patient/^[a-zA-Z0-9_-]+$"
+            x-example: "Patient/PATIENT1"
+      responses:
+          200:
+            description: OK [Response message with Goal resource]
+            schema:
+              type: "object"
+          400:
+            description: Error in request
+            schema:
+              $ref: '#/definitions/OperationOutcome'
+          500:
+            description: Unexpected error
+            schema:
+              '$ref': '#/definitions/OperationOutcome_Error'
 
 # no work, even though path in oda-fhir-service in CarePlanProvider
   /CareTeam/$search-servicerequests:
@@ -196,41 +195,41 @@ paths:
               $ref: '#/definitions/Bundle'
 #
 # # insufficent rights to assign careplan
-#   /CarePlan/{id}/$assign:
-#     post:
-#       description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
-#       consumes:
-#         - application/json+fhir;charset=UTF-8
-#       parameters:
-#         - name: id
-#           in: path
-#           required: true
-#           description: identifier for the careplan
-#           type: string
-#           pattern: "^[a-zA-Z0-9_-]+$"
-#           x-example: "CAREPLAN1-PATIENT1"
-#         - name: body
-#           in: body
-#           required: true
-#           description: EpisodeOfCare to update/create
-#           schema:
-#             $ref: '#/definitions/EpisodeOfCare'
-#         - name: practitioner
-#           in: query
-#           required: true
-#           description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
-#           type: string
-#           pattern: "^[a-zA-Z0-9_-]+$"
-#           x-example: 'PRACTITIONER1'
-#       tags:
-#         - Professional service request list
-#       responses:
-#           200:
-#             description: OK
-#           500:
-#             description: Unexpected error
-#             schema:
-#               '$ref': '#/definitions/Error'
+  /CarePlan/{id}/$assign:
+    post:
+      description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+      consumes:
+        - application/json+fhir;charset=UTF-8
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: identifier for the careplan
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+          x-example: "CAREPLAN1-PATIENT1"
+        - name: body
+          in: body
+          required: true
+          description: EpisodeOfCare to update/create
+          schema:
+            $ref: '#/definitions/EpisodeOfCare'
+        - name: practitioner
+          in: query
+          required: true
+          description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+          x-example: 'PRACTITIONER1'
+      tags:
+        - Professional service request list
+      responses:
+          200:
+            description: OK
+          500:
+            description: Unexpected error
+            schema:
+              '$ref': '#/definitions/OperationOutcome_Error'
 
 definitions:
   Bundle:
@@ -243,11 +242,12 @@ definitions:
       goal:
         $ref: '#/definitions/Goal'
 
-  BundleCarePlanCommunication:
-    type: object
-    properties:
-      communication:
-        $ref: '#/definitions/Communication'
+  # draft resource for this path /Communication/$search:
+#  BundleCarePlanCommunication:
+#    type: object
+#    properties:
+#      communication:
+#        $ref: '#/definitions/Communication'
 
 
 
@@ -443,10 +443,14 @@ definitions:
         type: object
       identifier:
         type: array
+        items:
+          type: object
       status:
         type: string
       category:
         type: array
+        items:
+          type: object
       description:
         type: string
       subject:
@@ -457,23 +461,60 @@ definitions:
         type: object
       author:
         type: array
+        items:
+          type: object
       careTeam:
         type: array
+        items:
+          type: object
       activity:
         type: array
+        items:
+          type: object
 
   CareTeam:
     type: object
     description: CareTeam resource
     properties:
+      resourceType:
+        type: string
+        enum:
+          - CareTeam
       id:
         type: string
+      status:
+        type: string
+        enum:
+          - proposed
+          - active
+          - suspended
+          - inactive
+          - entered-in-error
 
   Goal:
     type: object
     properties:
+      resourceType:
+        type: string
+        enum:
+          - Goal
       id:
         type: string
+      status:
+        enum:
+          - proposed
+          - accepted
+          - planned
+          - in-progress
+          - on-target
+          - ahead-of-target
+          - behind-target
+          - sustaining
+          - achieved
+          - on-hold
+          - cancelled
+          - entered-in-error
+          - rejected
 
   EpisodeOfCare:
     type: object
@@ -505,7 +546,7 @@ definitions:
       careManager:
         type: object
       team:
-        type: array
+        type: string
 
 
 
