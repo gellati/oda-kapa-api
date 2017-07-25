@@ -13,8 +13,12 @@ schemes:
 basePath: /fhir
 produces:
   - application/json+fhir;charset=UTF-8
+#  - text/plain
 consumes:
+#  - text/plain
   - application/json+fhir;charset=UTF-8
+
+
 
 # using 500 for default error responses
 
@@ -276,7 +280,7 @@ definitions:
 
   Communication:
     type: object
-    description: Communication
+    description: Communication resource
     properties:
       resourceType:
         type: string
