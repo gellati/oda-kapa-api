@@ -1,4 +1,4 @@
-# this is a first draft of the CarePlan comments API
+# this is a first draft of the ODA API served via the National Service Architecture KaPA
 swagger: '2.0'
 info:
   title: API for professional services published over National Service Architecture
@@ -13,9 +13,7 @@ schemes:
 basePath: /fhir
 produces:
   - application/json+fhir;charset=UTF-8
-#  - text/plain
 consumes:
-#  - text/plain
   - application/json+fhir;charset=UTF-8
 
 
@@ -23,10 +21,153 @@ consumes:
 # using 500 for default error responses
 
 paths:
+
+
+## todo: how to document websocket responses
+#  /CarePlan/$sent:
+#    post:
+#      summary: New CarePlan notification
+#      description: Async notification of a new CarePlan. Related EpisodeOfCare,
+#        CareTeam, Practitioner and Person resources as parameters.
+#      tags:
+#        - Notifications
+
+#  /Communication
+#    post:
+#      summary: New Comment notification
+#      description: Async notification of a new Comment. Related CarePlan and
+#        Person resources as parameter.
+#      tags:
+#        - Notifications
+
+
+
+
+
+  /CarePlan:
+    get:
+      summary: Return CarePlan information according to given parameters
+      description: Search CarePlan resources. The return message will be checked to see if query
+        maker is authorized to access the information
+      parameters:
+          - name: goal
+            in: query
+            required: false
+            type: string
+            description: query for the goal related to the CarePlan
+            pattern: "Goal/^[a-zA-Z0-9_-]+$"
+          - name: status
+            in: query
+            required: false
+            type: string
+          - name: subject
+            in: query
+            required: true
+            type: string
+            description: Who the careplan is meant for
+            pattern: "Patient/^[a-zA-Z0-9_-]+$"
+            x-example: "Patient/PATIENT1"
+      responses:
+          200:
+            description: OK [Response message with Goal resource]
+            schema:
+              type: "object"
+          400:
+            description: Error in request
+            schema:
+              $ref: '#/definitions/OperationOutcome'
+          500:
+            description: Unexpected error
+            schema:
+              $ref: '#/definitions/OperationOutcome'
+
+#works in dredd
+  /CarePlan/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: CarePlan corresponding to the id
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+          x-example: 'CAREPLAN1-PATIENT1'
+      tags:
+        - CarePlan comments and notifications
+      responses:
+        200:
+          description: CarePlan with new comments
+          schema:
+            $ref: '#/definitions/CarePlan'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/OperationOutcome'
+
+# # insufficent rights to assign careplan
+  /CarePlan/{id}/$assign:
+    post:
+      description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+      consumes:
+        - application/json+fhir;charset=UTF-8
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: identifier for the careplan
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+          x-example: "CAREPLAN1-PATIENT1"
+        - name: body
+          in: body
+          required: true
+          description: EpisodeOfCare to update/create
+          schema:
+            $ref: '#/definitions/EpisodeOfCare'
+        - name: practitioner
+          in: query
+          required: true
+          description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+          x-example: 'PRACTITIONER1'
+      tags:
+        - Professional service request list
+      responses:
+        200:
+          description: OK
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/OperationOutcome'
+
+# no work, even though path in oda-fhir-service in CarePlanProvider
+  /CareTeam/$search-servicerequests:
+    get:
+      summary: Return Careteams and EpisodeOfCares of professional
+      description: Search CarePlan resources that the professional is authorized to access (include linked CareTeam and EpisodeOfCare resources)
+      tags:
+        - Professional service request list
+      parameters:
+        - name: practitioner
+          in: query
+          required: true
+          type: string
+          description: Query for the CareTeams and EpisodeOfCares corresponding to a professional
+          pattern: "^[a-zA-Z0-9_-]+$"
+          x-example: "PRACTITIONER1"
+      responses:
+        200:
+          description: OK [Bundle with CareTeam and EpisodeOfCare resources]
+          schema:
+              $ref: '#/definitions/Bundle'
+
   /Communication:
     post:
-      summary: Endpoint to create new CarePlan comment
-      description: Endpoint where a new comment can be added to the careplan
+      summary: New CarePlan comment creation
+      description: Endpoint where a new comment can be added to the careplan.
+        The data structure of the comment should be structured according to FHIR
+        specifications (http://hl7.org/fhir/communication.html).
       consumes:
         - application/json+fhir;charset=UTF-8
       parameters:
@@ -42,7 +183,7 @@ paths:
         201:
           description: OK
           schema:
-            $ref: '#/definitions/OperationOutcome' #_CommunicationPost'
+            $ref: '#/definitions/OperationOutcome'
         400:
           description: Error in request
           schema:
@@ -50,12 +191,12 @@ paths:
         500:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/OperationOutcome_Error'
+            $ref: '#/definitions/OperationOutcome'
 
 # problem with parameters
     get:
-      summary: Get comments related to the careplan, searched and filtered by different parameters
-      description: The search path for Communication
+      summary: Search path for Communication
+      description: Get comments related to the careplan, searched and filtered by different parameters
       parameters:
         - name:  based-on #based%2don
 #        - name: "based-on" ## correct parameter name? is it "based-on"?
@@ -92,7 +233,27 @@ paths:
         500:
           description: Unexpected error
           schema:
-            $ref: '#/definitions/OperationOutcome_Error'
+            $ref: '#/definitions/OperationOutcome'
+
+  /Communication/{id}/$seen:
+    post:
+      summary: Seen notifications
+      description: Marks the notifications as seen
+      tags:
+        - Notifications
+      parameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+          description: The identifier for the Communication resource that has
+            been seen.
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/OperationOutcome'
+
 
 # this does not work??
   # /Communication/$search:
@@ -111,172 +272,205 @@ paths:
   #       200:
   #         description: Communication related to CarePlan
   #         schema:
-  #           $ref: '#/definitions/BundleCarePlanCommunication'
+  #           $ref: '#/definitions/Bundle'
   #       500:
   #         description: Unexpected error
   #         schema:
-  #           $ref: '#/definitions/OperationOutcome_Error'
+  #           $ref: '#/definitions/OperationOutcome'
 
-#works in dredd
-  /CarePlan/{id}:
-    get:
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: CarePlan corresponding to the id
-          type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: 'CAREPLAN1-PATIENT1'
-      tags:
-        - CarePlan comments and notifications
-      responses:
-        200:
-          description: CarePlan with new comments
-          schema:
-            $ref: '#/definitions/CarePlan'
-        500:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/OperationOutcome_Error'
-
-  /CarePlan:
-    get:
-      summary: Search CarePlan resources. The return message will be checked to see if query
-        maker is authorized to access the information
-      description: Return CarePlan information according to given parameters
-      parameters:
-          - name: goal
-            in: query
-            required: false
-            type: string
-            description: query for the goal related to the CarePlan
-            pattern: "Goal/^[a-zA-Z0-9_-]+$"
-          - name: status
-            in: query
-            required: false
-            type: string
-          - name: subject
-            in: query
-            required: true
-            type: string
-            description: Who the careplan is meant for
-            pattern: "Patient/^[a-zA-Z0-9_-]+$"
-            x-example: "Patient/PATIENT1"
-      responses:
-          200:
-            description: OK [Response message with Goal resource]
-            schema:
-              type: "object"
-          400:
-            description: Error in request
-            schema:
-              $ref: '#/definitions/OperationOutcome'
-          500:
-            description: Unexpected error
-            schema:
-              '$ref': '#/definitions/OperationOutcome_Error'
-
-# no work, even though path in oda-fhir-service in CarePlanProvider
-  /CareTeam/$search-servicerequests:
-    get:
-      summary: Search CarePlan resources that the professional is authorized to access (include linked CareTeam and EpisodeOfCare resources)
-      description: Return Careteams and EpisodeOfCares of professional
-      tags:
-        - Professional service request list
-      parameters:
-        - name: practitioner
-          in: query
-          required: true
-          type: string
-          description: Query for the CareTeams and EpisodeOfCares corresponding to a professional
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: "PRACTITIONER1"
-      responses:
-        200:
-          description: OK [Bundle with CareTeam and EpisodeOfCare resources]
-          schema:
-              $ref: '#/definitions/Bundle'
-#
-# # insufficent rights to assign careplan
-  /CarePlan/{id}/$assign:
-    post:
-      description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
-      consumes:
-        - application/json+fhir;charset=UTF-8
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: identifier for the careplan
-          type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: "CAREPLAN1-PATIENT1"
-        - name: body
-          in: body
-          required: true
-          description: EpisodeOfCare to update/create
-          schema:
-            $ref: '#/definitions/EpisodeOfCare'
-        - name: practitioner
-          in: query
-          required: true
-          description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
-          type: string
-          pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: 'PRACTITIONER1'
-      tags:
-        - Professional service request list
-      responses:
-          200:
-            description: OK
-          500:
-            description: Unexpected error
-            schema:
-              '$ref': '#/definitions/OperationOutcome_Error'
 
 definitions:
   Bundle:
     type: object
     properties:
+      resourceType:
+        type: string
+        enum:
+          - Bundle
       careteam:
         $ref: '#/definitions/CareTeam'
       careplan:
         $ref: '#/definitions/CarePlan'
+      communication:
+        $ref: '#/definitions/Communication'
       goal:
         $ref: '#/definitions/Goal'
-
-  # draft resource for this path /Communication/$search:
-#  BundleCarePlanCommunication:
-#    type: object
-#    properties:
-#      communication:
-#        $ref: '#/definitions/Communication'
+    required:
+      - resourceType
+    example:
+      resourceType: Bundle
 
 
+  CarePlan:
+    type: object
+    description: CarePlan resource
+    properties:
+      resourceType:
+        type: string
+        enum:
+          - CarePlan
+      identifier:
+        type: array
+        items:
+          type: object
+          properties:
+            system:
+              type: string
+            value:
+              type: string
+      status:
+        type: string
+        enum:
+          - draft
+          - active
+          - suspended
+          - completed
+          - entered-in-error
+          - cancelled
+          - unknown
+      category:
+        type: array
+        items:
+          type: object
+          properties:
+            text:
+              type: string
+      description:
+        type: string
+      subject:
+        type: object
+        properties:
+          reference:
+            type: string
+      context:
+        type: object
+        properties:
+          reference:
+            type: string
+      period:
+        type: object
+        properties:
+          start:
+            type: string
+            format: dateTime
+          end:
+            type: string
+            format: dateTime
+      author:
+        type: array
+        items:
+          type: object
+          properties:
+            reference:
+              type: string
+      careTeam:
+        type: array
+        items:
+          type: object
+          properties:
+            reference:
+              type: string
+      activity:
+        type: array
+        items:
+          type: object
+          properties:
+            detail:
+              type: object
+              properties:
+                category:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                code:
+                  type: object
+                  properties:
+                    coding:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          system:
+                            type: string
+                          version:
+                            type: string
+                          code:
+                            type: string
+    required:
+      - resourceType
+      - status
+    example:
+      resourceType: CarePlan
+      status: active
+      description:
+        Nieluvaivasi on todennäköisesti lievä
+        virustauti, jonka yhteydessä oloa voi
+        helpottaa levolla ja tulehduskipulääkkeillä.
+      subject:
+        reference: Patient/PATIENT1
+      period:
+        start: "2017-03-01T00:00:00.000Z"
+        end: "2017-04-02T23:59:59.999Z"
 
-#      careteam:
-#        type: object
-#        description: CareTeam resource
-#        items:
-#          $ref: '#/definitions/CareTeam'
-#      careplan:
-#        type: object
-#        description: CarePlan resource
-#        items:
-#          $ref: '#/definitions/CarePlan'
-
-  # Communication:
-  #   type: object
-  #   description: Communication resource
-  #   properties:
-  #     id:
-  #       type: string
-  #       description: Unique identifier for the comment.
-  #     category:
-  #         type: string
-  #         description: The current status of the comment.
-
+  CareTeam:
+    type: object
+    description: CareTeam resource
+    properties:
+      resourceType:
+        type: string
+        enum:
+          - CareTeam
+      id:
+        type: string
+      status:
+        type: string
+        enum:
+          - proposed
+          - active
+          - suspended
+          - inactive
+          - entered-in-error
+      name:
+        type: string
+      period:
+        type: object
+        properties:
+          start:
+            type: string
+            format: dateTime
+          end:
+            type: string
+            format: dateTime
+      participant:
+        type: object
+        properties:
+          role:
+            type: object
+            properties:
+              text:
+                type: string
+          member:
+            type: object
+            properties:
+              reference:
+                type: string
+              display:
+                type: string
+    required:
+      - resourceType
+      - status
+    example:
+      resourceType: CareTeam
+      id: CARETEAM3-AUTHORIZATION
+      status: active
+      name: Hoitotiimi
+      participant:
+        role:
+          text: "Hoitava lääkäri"
+        member:
+          reference: "Practitioner/PRACTITIONER1"
+          display: "Pekka Pakarinen"
 
   Communication:
     type: object
@@ -290,12 +484,11 @@ definitions:
         type: object
         properties:
           status:
-            enum:
-              - generated
+            type: string
           div:
-            enum:
-              - "You are progressing well! Good work!"
+            type: string
       status:
+        type: string
         enum:
           - preparation
           - in-progress
@@ -315,9 +508,6 @@ definitions:
         properties:
           reference:
             type: string
-#            example: Patient/PATIENT1
-#            enum:
-#              - "Patient/PATIENT1"
       basedOn:
         type: array
         items:
@@ -325,12 +515,9 @@ definitions:
           properties:
             reference:
               type: string
-#              example: CarePlan/CAREPLAN1-PATIENT1
-#              enum:
-#                - "CarePlan/CAREPLAN1-PATIENT1"
       sent:
         type: string
-#        format: date-time
+        format: date-time
 #        enum:
 #          - "2017-06-20T18:01:10-09:00"
       received:
@@ -343,9 +530,6 @@ definitions:
         properties:
           reference:
             type: string
-#            example: Practitioner/PRACTITIONER1
-#            enum:
-#              - "Practitioner/PRACTITIONER1"
       recipient:
         type: array
         items:
@@ -353,9 +537,6 @@ definitions:
           properties:
             reference:
               type: string
-#              example: Patient/PATIENT1
-#              enum:
-#                - "Patient/PATIENT1"
       payload:
         type: array
         items:
@@ -365,16 +546,7 @@ definitions:
               type: string
     required:
       - resourceType
-#      - text
       - status
-      - category
-      - subject
-      - basedOn
-      - sent
-      - received
-      - sender
-      - recipient
-      - payload
     example:
       resourceType: Communication
       text:
@@ -398,102 +570,53 @@ definitions:
         items:
           contentString: "You are progressing well! Good work!"
 
-
-
-
-
-#           # schema-example:
-#           #   {
-#           #       "resourceType": "Communication",
-#           #       "text": {
-#           #           "status": "generated",
-#           #           "div": "<div>You are progressing well! Good work!</div>"
-#           #       },
-#           #       "status": "completed",
-#           #       "category": [{
-#           #           "text": "oda-careplan-comment"
-#           #       }],
-#           #       "subject": {
-#           #           "reference": "Patient/PATIENT1"
-#           #       },
-#           #       "basedOn": [{
-#           #           "reference": "CarePlan/CAREPLAN1-PATIENT1"
-#           #       }],
-#           #       "sent": "2017-06-20T18:01:10-08:00",
-#           #       "received": "2017-06-20T18:01:10-09:00",
-#           #       "sender": {
-#           #           "reference": "Practitioner/PRACTITIONER1"
-#           #       },
-#           #       "recipient": [{
-#           #           "reference": "Patient/PATIENT1"
-#           #       }],
-#           #       "payload": [{
-#           #           "contentString": "You are progressing well! Good work!"
-#           #       }]
-#           #   }
-
-
-
-
-  CarePlan:
+  EpisodeOfCare:
     type: object
-    description: CarePlan resource
-    properties:
-      resourceType:
-        type: string
-      id:
-        type: string
-      meta:
-        type: object
-      identifier:
-        type: array
-        items:
-          type: object
-      status:
-        type: string
-      category:
-        type: array
-        items:
-          type: object
-      description:
-        type: string
-      subject:
-        type: object
-      context:
-        type: object
-      period:
-        type: object
-      author:
-        type: array
-        items:
-          type: object
-      careTeam:
-        type: array
-        items:
-          type: object
-      activity:
-        type: array
-        items:
-          type: object
-
-  CareTeam:
-    type: object
-    description: CareTeam resource
+    description: EpisodeOfCare object
     properties:
       resourceType:
         type: string
         enum:
-          - CareTeam
+          - EpisodeOfCare
       id:
         type: string
       status:
         type: string
         enum:
-          - proposed
+          - planned
+          - waitlist
           - active
-          - suspended
-          - inactive
+          - onhold
+          - finished
+          - cancelled
           - entered-in-error
+      patient:
+        type: object
+        properties:
+          reference:
+            type: string
+      careManager:
+        type: object
+        properties:
+          reference:
+            type: string
+      team:
+        type: string
+        properties:
+          reference:
+            type: string
+    required:
+      - resourceType
+      - status
+    example:
+      resourceType: EpisodeOfCare
+      status: active
+      patient:
+        reference: "Patient/PATIENT1"
+      careManager:
+        reference: "Practitioner/PRACTITIONER2"
+      team:
+        reference: "CareTeam/CARETEAM2-CARE"
 
   Goal:
     type: object
@@ -505,6 +628,7 @@ definitions:
       id:
         type: string
       status:
+        type: string
         enum:
           - proposed
           - accepted
@@ -519,73 +643,33 @@ definitions:
           - cancelled
           - entered-in-error
           - rejected
-
-  EpisodeOfCare:
-    type: object
+      description:
+        type: object
+        properties:
+          coding:
+            type: object
+            properties:
+              system:
+                type: string
+              version:
+                type: string
+              code:
+                type: string
+              display:
+                type: string
+          text:
+            type: string
     required:
       - resourceType
       - status
-    description: EpisodeOfCare object
-    properties:
-      resourceType:
-        type: string
-        enum:
-          - EpisodeOfCare
-      id:
-        type: string
-      meta:
-        type: object
-      status:
-        type: string
-        enum:
-          - planned
-          - waitlist
-          - active
-          - onhold
-          - finished
-          - cancelled
-          - entered-in-error
-      patient:
-        type: object
-      careManager:
-        type: object
-      team:
-        type: string
-
-
-
-    # type: string
-    # example:
-    #     "resourceType": "EpisodeOfCare"
-    #     "id": "EPISODEOFCARE1-PATIENT1"
-    #     "meta":
-    #       "versionId": "1"
-    #       "lastUpdated": "2017-07-12T13:38:52.251+03:00"
-    #     "status": "active"
-    #     "patient":
-    #       "reference": "Patient/PATIENT1"
-    #     "careManager":
-    #       "reference": "Practitioner/PRACTITIONER2"
-    #     "team":
-    #         "reference": "CareTeam/CARETEAM2-CARE"
-
-
-  OperationOutcome_Error:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-      fields:
-        type: string
+    example:
+      resourceType: Goal
+      status: proposed
+      description:
+        text: Lopeta tupakointi
 
   OperationOutcome:
     type: object
-    required:
-      - resourceType
-      - issue
     properties:
       resourceType:
         type: string
@@ -594,6 +678,11 @@ definitions:
         properties:
           status:
             type: string
+            enum:
+              - fatal
+              - error
+              - warning
+              - information
           div:
             type: string
       issue:
@@ -605,5 +694,28 @@ definitions:
               type: string
             code:
               type: string
+            details:
+              type: object
+              properties:
+                coding:
+                  type: object
+                  properties:
+                    system:
+                      type: string
+                    code:
+                      type: string
+                text:
+                  type: string
             diagnostics:
               type: string
+    required:
+      - resourceType
+      - issue
+    example:
+      resourceType: OperationOutcome
+      issue:
+        items:
+          severity: error
+          details:
+            text: Operation unknown
+          
