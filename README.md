@@ -6,9 +6,9 @@
 
 Testing the use of Swagger (OpenAPI) for documentation purposes.
 
-The folder oda-kapa-hapi contains swagger running on a hapi server, oda-kapa-express contains swagger running on an express server.
+This folder contains swagger running on an express server.
 
-In both folders, install necessary node packages with
+Install necessary node packages with
 
     npm install
 
@@ -22,7 +22,6 @@ Editor can be run with
 
     npm run edit
 
-Code under work is in oda-kapa-express.
 
 ok so far
 - editor works
@@ -31,7 +30,6 @@ ok so far
 - post data structures in data models
 
 Current issues/todos:
-- Dredd hooks to be able to skip tests
 - not all get requests work, problem with parameters?
 - content of post requests
 - custom operation paths that don't seem to work

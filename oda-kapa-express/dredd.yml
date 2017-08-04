@@ -1,5 +1,5 @@
 # documentation about options can be read in https://github.com/apiaryio/dredd/blob/master/src/options.coffee
-dry-run: null
+dry-run: null #null, true
 hookfiles: ./hooks/hook.*
 language: nodejs
 sandbox: false
@@ -17,7 +17,7 @@ user: null
 inline-errors: false
 method: []
 color: true
-level: info
+level: verbose # verbose, info
 timestamp: false
 silent: false
 path: []
@@ -29,4 +29,5 @@ hooks-worker-term-timeout: 5000
 hooks-worker-term-retry: 500
 config: ./dredd.yml
 blueprint: ./kapa-api/kapa-api.yaml
-endpoint: 'https://oda.medidemo.fi'
+endpoint: 'https://localhost:6082'
+#endpoint: 'https://oda.medidemo.fi'

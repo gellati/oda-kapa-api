@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "node app.js",
+    "start:server": "rm -rf ./build && webpack --config webpack.config.server.js",
     "test": "swagger project test",
     "edit": "export swagger_swagger_fileName=kapa-api/kapa-api.yaml&&swagger project edit"
   }

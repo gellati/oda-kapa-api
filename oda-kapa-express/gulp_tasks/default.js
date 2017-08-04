@@ -1,5 +1,5 @@
 var gulp = require('gulp')
 
 gulp.task("default", function(){
-  gulp.watch("kapa-api/index.yaml", ["swagger"])
+  gulp.watch(["kapa-api/kapa-api.yaml", "index.html"], ["swagger"])
 });

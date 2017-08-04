@@ -1,6 +1,0 @@
-Communication:
-  $ref: ./Communication.yaml
-CarePlan:
-  $ref: ./CarePlan.yaml
-Error:
-  $ref: ./Error.yaml

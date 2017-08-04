@@ -5,15 +5,20 @@ info:
   description: Get comments and notifications related to the Care Plan
   version: "0.0.1"
 # the domain of the service
-host: oda.medidemo.fi
+
+#host: oda.medidemo.fi
+host: localhost:6082
+
 # array of all supported schemes
 schemes:
   - https
 # will be prefixed to all paths
 basePath: /fhir
 produces:
+#  - text/plain
   - application/json+fhir;charset=UTF-8
 consumes:
+#  - text/plain
   - application/json+fhir;charset=UTF-8
 
 
@@ -32,21 +37,12 @@ paths:
 #      tags:
 #        - Notifications
 
-#  /Communication
-#    post:
-#      summary: New Comment notification
-#      description: Async notification of a new Comment. Related CarePlan and
-#        Person resources as parameter.
-#      tags:
-#        - Notifications
 
 
-
-
-
+# queries have not been implemented yet. 2.8.2017
   /CarePlan:
     get:
-      summary: Return CarePlan information according to given parameters
+      summary: Get CarePlan
       description: Search CarePlan resources. The return message will be checked to see if query
         maker is authorized to access the information
       parameters:
@@ -81,7 +77,7 @@ paths:
             schema:
               $ref: '#/definitions/OperationOutcome'
 
-#works in dredd
+#works 2.8.2017
   /CarePlan/{id}:
     get:
       parameters:
@@ -91,7 +87,7 @@ paths:
           description: CarePlan corresponding to the id
           type: string
           pattern: "^[a-zA-Z0-9_-]+$"
-          x-example: 'CAREPLAN1-PATIENT1'
+          x-example: 'CAREPLAN1-PATIENT2'
       tags:
         - CarePlan comments and notifications
       responses:
@@ -104,7 +100,7 @@ paths:
           schema:
             $ref: '#/definitions/OperationOutcome'
 
-# # insufficent rights to assign careplan
+# insufficent rights to assign careplan
   /CarePlan/{id}/$assign:
     post:
       description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
@@ -162,6 +158,22 @@ paths:
           schema:
               $ref: '#/definitions/Bundle'
 
+# websocket operation, how to test in dredd 2.8.2017
+#  /Communication
+#    post:
+ #     operations: socket
+#    operations:
+#      socket:
+#        nickname: "/Communication"
+#
+#        summary: New Comment notification
+#        description: Async notification of a new Comment. Related CarePlan and
+#          Person resources as parameter.
+#        tags:
+#          - Notifications
+
+
+
   /Communication:
     post:
       summary: New CarePlan comment creation
@@ -192,7 +204,6 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/OperationOutcome'
-
 # problem with parameters
     get:
       summary: Search path for Communication
@@ -235,6 +246,7 @@ paths:
           schema:
             $ref: '#/definitions/OperationOutcome'
 
+# has this been implemented? 2.8.2017
   /Communication/{id}/$seen:
     post:
       summary: Seen notifications
@@ -248,6 +260,7 @@ paths:
           required: true
           description: The identifier for the Communication resource that has
             been seen.
+          x-example: COMMUNICATION1-PATIENT1
       responses:
         200:
           description: OK
@@ -256,27 +269,27 @@ paths:
 
 
 # this does not work??
-  # /Communication/$search:
-  #   get:
-  #     parameters:
-  #       - name: basedOn # based-on # this wrong?
-  #         in: path
-  #         required: false
-  #         description: id of the CarePlan
-  #         type: string
-  #         pattern: "CarePlan/^[a-zA-Z0-9_-]+$"
-  #         x-example: 'CarePlan/CAREPLAN1-PATIENT1'
-  #     tags:
-  #       - CarePlan comments and notifications
-  #     responses:
-  #       200:
-  #         description: Communication related to CarePlan
-  #         schema:
-  #           $ref: '#/definitions/Bundle'
-  #       500:
-  #         description: Unexpected error
-  #         schema:
-  #           $ref: '#/definitions/OperationOutcome'
+  /Communication/$search:
+    get:
+      parameters:
+        - name: basedOn # based-on # this wrong?
+          in: query
+          required: false
+          description: id of the CarePlan
+          type: string
+          pattern: "CarePlan/^[a-zA-Z0-9_-]+$"
+          x-example: 'CarePlan/CAREPLAN1-PATIENT1'
+      tags:
+        - CarePlan comments and notifications
+      responses:
+        200:
+          description: Communication related to CarePlan
+          schema:
+            $ref: '#/definitions/Bundle'
+        500:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/OperationOutcome'
 
 
 definitions:
@@ -692,6 +705,11 @@ definitions:
           properties:
             severity:
               type: string
+              enum:
+                - fatal
+                - error
+                - warning
+                - information
             code:
               type: string
             details:
@@ -718,4 +736,3 @@ definitions:
           severity: error
           details:
             text: Operation unknown
-          
