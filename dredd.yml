@@ -1,0 +1,33 @@
+# documentation about options can be read in https://github.com/apiaryio/dredd/blob/master/src/options.coffee
+dry-run: null #null, true
+hookfiles: ./hooks/hook.*
+language: nodejs
+sandbox: false
+server: null
+server-wait: 3
+init: false
+custom: {}
+names: false
+only: []
+reporter: []
+output: []
+header: []
+sorted: false
+user: null
+inline-errors: false
+method: []
+color: true
+level: verbose # verbose, info
+timestamp: false
+silent: false
+path: []
+hooks-worker-timeout: 5000
+hooks-worker-connect-timeout: 1500
+hooks-worker-connect-retry: 500
+hooks-worker-after-connect-wait: 100
+hooks-worker-term-timeout: 5000
+hooks-worker-term-retry: 500
+config: ./dredd.yml
+blueprint: ./kapa-api/kapa-api.yaml
+endpoint: 'https://localhost:6082'
+#endpoint: 'https://oda.medidemo.fi'

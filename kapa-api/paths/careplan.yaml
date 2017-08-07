@@ -1,0 +1,78 @@
+  /CarePlan
+    get:
+      summary: Search CarePlan resources. The return message will be checked to see if query
+      maker is authorized to access the information
+      description: Return CarePlan information according to given parameters
+      parameters:
+        - name: goal
+          in: query
+          required: false
+          type: string
+          description: query for the goal related to the CarePlan
+          pattern: "Goal/^[a-zA-Z0-9_-]+$"
+        - name: status
+          in: query
+          required: false
+          type: string
+          
+          
+        - name: subject
+          in: query
+          required: false
+          type: string
+          description: Who the careplan is meant for
+          pattern: "Patient/^[a-zA-Z0-9_-]+$"
+
+
+
+          responses:
+        200:
+          description: OK [Response message with Goal resource]
+        default:
+          description: Unexpected error
+          schema:
+            '$ref': '#/definitions/Error'
+          
+
+  /CarePlan/$search-servicerequests:
+    get:
+      summary: Search CarePlan resources that the professional is authorized to access (include linked CareTeam and EpisodeOfCare resources)
+      description: Return Careteams and EpisodeOfCares of professional
+      parameters:
+        - name: Practitioner
+          in: query
+          required: true
+          type: string
+          description: Query for the CareTeams and EpisodeOfCares corresponding to a professional
+          pattern: "^[a-zA-Z0-9_-]+$"
+      responses:
+        200:
+          description: OK [Bundle with CareTeam and EpisodeOfCare resources]
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Bundle'
+
+  /CarePlan/{id}/$assign:
+    post:
+      description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: identifier for the careplan
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+        - name: practitioner
+          in: query
+          required: true
+          description: Update (if exists) or create new EpisodeOfCare and set CareManager reference to Practitioner
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+$"
+      responses:
+        200:
+          description: OK
+        default:
+          description: Unexpected error
+          schema:
+            '$ref': '#/definitions/Error'

@@ -1,0 +1,6 @@
+Communication:
+  $ref: ./kapa-api/definitions/Communication.yaml
+CarePlan:
+  $ref: ./CarePlan.yaml
+Error:
+  $ref: ./definitions/Error.yaml
