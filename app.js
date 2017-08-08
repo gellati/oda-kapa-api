@@ -9,7 +9,7 @@ var SWAGGERPORT = 8989;
 var config = {
   appRoot: __dirname, // required config
 // use these two lines to define location of own swagger file
-  configDir: __dirname + '/config/swagger',
+//  configDir: __dirname + '/config/swagger',
   swaggerFile: __dirname + '/kapa-api/kapa-api.yaml'
 };
 

@@ -2,7 +2,7 @@
 swagger: '2.0'
 info:
   title: API for professional services published over National Service Architecture
-  description: Get comments and notifications related to the Care Planss
+  description: API for professional services published over National Service Architecture
   version: "0.0.1"
 # the domain of the service
 
