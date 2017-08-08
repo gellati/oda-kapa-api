@@ -2,12 +2,15 @@
 swagger: '2.0'
 info:
   title: API for professional services published over National Service Architecture
-  description: API for professional services published over National Service Architecture
+  description: API for professional services published over National Service Architecture. These
+    The paths are part of the public API for the ODA service. The data models returned by the API
+    follow the [FHIR specification](https://www.hl7.org/fhir). ODA has its own specifications at
+    this [site](https://www.simplifier.net/ODA-PHR-Proposals)
   version: "0.0.1"
 # the domain of the service
 
-#host: oda.medidemo.fi
-host: localhost:6082
+host: oda.medidemo.fi
+#host: localhost:6082
 
 # array of all supported schemes
 schemes:
@@ -295,6 +298,7 @@ paths:
 definitions:
   Bundle:
     type: object
+    description: Bundle object, based on http://www.hl7.org/fhir/bundle.html
     properties:
       resourceType:
         type: string
@@ -316,7 +320,7 @@ definitions:
 
   CarePlan:
     type: object
-    description: CarePlan resource
+    description: CarePlan resource, based on http://www.hl7.org/fhir/careplan.html
     properties:
       resourceType:
         type: string
@@ -428,7 +432,7 @@ definitions:
 
   CareTeam:
     type: object
-    description: CareTeam resource
+    description: CareTeam resource, based on http://www.hl7.org/fhir/careteam.html
     properties:
       resourceType:
         type: string
@@ -487,7 +491,7 @@ definitions:
 
   Communication:
     type: object
-    description: Communication resource
+    description: Communication resource, based on http://www.hl7.org/fhir/communication.html
     properties:
       resourceType:
         type: string
@@ -585,7 +589,7 @@ definitions:
 
   EpisodeOfCare:
     type: object
-    description: EpisodeOfCare object
+    description: EpisodeOfCare object, based on http://www.hl7.org/fhir/episodeofcare.html
     properties:
       resourceType:
         type: string
@@ -633,6 +637,7 @@ definitions:
 
   Goal:
     type: object
+    description: Goal object, based on http://www.hl7.org/fhir/goal.html
     properties:
       resourceType:
         type: string
@@ -683,6 +688,7 @@ definitions:
 
   OperationOutcome:
     type: object
+    description: OperationOutcome object, based on http://www.hl7.org/fhir/operationoutcome.html
     properties:
       resourceType:
         type: string
