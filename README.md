@@ -74,21 +74,3 @@ The app.js file contains the variables `configDir` and `swaggerFile` which can b
 In the `package.json` file the environmental variable `swagger_swagger_fileName` should be set to the directory where the swagger file is located.
 
 This makes it possible to edit the swagger file directly in a browser-based editor.
-
-
-## Development and todos
-
-Current issues/todos:
-- not all get requests work, problem with parameters?
-- documenting websocket responses
-- content of post requests
-- custom operation paths that don't seem to work
-  - CareTeam/$search-servicerequests
-  - CarePlan/{id}/$assign
-  - Communication/$search
-- GET parameters which are not accepted
-   - basedOn/based-on in $search
-   - subject in CarePlan
-   - sender, patient, basedOn in Communication
-- tests that pass, but what do they mean?
-- (optional, if using express server) automate server restarts with gulp/webpack
