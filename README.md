@@ -33,8 +33,7 @@ Editor can be run with
 
     npm run edit
 
-This folder contains swagger running on an express server.
-
+The edits are done in real time to the swagger spec file.
 
 ## Tests
 
