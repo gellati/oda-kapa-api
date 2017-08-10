@@ -4,7 +4,7 @@
 
 ## Overview
 
-Documenting the ODA KaPA API with Swagger (OpenAPI). The API description is in the folder kapa-api. The API documentation can be read online here and also be downloaded and read by running a local server.
+Documenting the ODA KaPA API with Swagger (OpenAPI). The API description is in the folder kapa-api. The API documentation can be read online [here](https://gellati.github.io/oda-kapa-api) and also be downloaded and read by running a local server.
 
 ## Configuration
 
