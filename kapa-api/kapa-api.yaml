@@ -3,7 +3,7 @@ swagger: '2.0'
 info:
   title: API for professional services published over National Service Architecture
   description: API for professional services published over National Service Architecture. These
-    The paths are part of the public API for the ODA service. The data models returned by the API
+    The patshs are part of the public API for the ODA service. The data models returned by the API
     follow the [FHIR specification](https://www.hl7.org/fhir). ODA has its own specifications at
     this [site](https://www.simplifier.net/ODA-PHR-Proposals)
   version: "0.0.1"
@@ -18,10 +18,8 @@ schemes:
 # will be prefixed to all paths
 basePath: /fhir
 produces:
-#  - text/plain
   - application/json+fhir;charset=UTF-8
 consumes:
-#  - text/plain
   - application/json+fhir;charset=UTF-8
 
 

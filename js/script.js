@@ -1,6 +1,6 @@
 window.onload = function() {
   const ui = SwaggerUIBundle({
-    url: './kapa-api/kapa-api.yaml',
+    url: 'https://raw.githubusercontent.com/omahoito/oda-kapa-api/master/kapa-api/kapa-api.yaml',
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [
